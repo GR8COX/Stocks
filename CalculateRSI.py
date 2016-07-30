@@ -3,7 +3,7 @@ import pandas.io.data
 import matplotlib.pyplot as plt
 
 
-def calculateRSI(data: object, window: object) -> object:
+def calculateRSI(data, window):
     # Window length for moving average
     window_length = window
 
@@ -39,9 +39,9 @@ def calculateRSI(data: object, window: object) -> object:
     RSI2 = 100.0 - (100.0 / (1.0 + RS2))
 
     # Compare graphically
-    plt.figure()
-    RSI1.plot()
-    RSI2.plot()
-    plt.legend(['RSI via EWMA', 'RSI via SMA'])
-    plt.show()
-    return {RSI1[-1], RSI2[-1]}
+    #plt.figure()
+    #RSI1.plot()
+    #RSI2.plot()
+    #plt.legend(['RSI via EWMA', 'RSI via SMA'])
+    #plt.show()
+    return {RSI2[-1]}

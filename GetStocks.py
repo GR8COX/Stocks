@@ -13,7 +13,7 @@ endDate = date.today()
 
 # Stock list
 # TODO: Gather List of Stocks
-stock = "FB"
+stock = "AAPL"
 
 # TODO: Iterate through each stock
 
@@ -21,29 +21,62 @@ stock = "FB"
 eodDataFrame = quandl.get("WIKI/" + stock, start_date=str(startDate), end_date=str(endDate), collapse="daily")
 stockPrice = eodDataFrame['Close']
 stockOpen = eodDataFrame['Open']
-stockHigh = eodDataFrame['HIgh']
+stockHigh = eodDataFrame['High']
 stockLow = eodDataFrame['Low']
 stockAssets = quandl.get("SF1/" + stock + "_ASSETS_ARQ.1", start_date=str(startDate), end_date=str(endDate))
 stockLiability = quandl.get("SF1/" + stock + "_LIABILITIES_ARQ.1", start_date=str(startDate), end_date=str(endDate))
 stockGrossIncome = quandl.get("SF1/" + stock + "_GP_ARQ.1", start_date=str(startDate), end_date=str(endDate))
 stockNetIncome = quandl.get("SF1/" + stock + "_NETINC_ART.1", start_date=str(startDate), end_date=str(endDate))
 stockVolume = eodDataFrame['Volume']
-    #quandl.get("EOD/" + stock + ".5", start_date=str(startDate), end_date=str(endDate), collapse="daily")
 stockVolumeVariance = 1234
 stockNetIncomePerEmployee = 1234
 
 # Compare Assets and Liability
-print(stockAssets.tail(1))
-print(stockLiability.tail(1))
+latestAssetValue = stockAssets['Value'][-1]
+latestLiabilityValue = stockLiability['Value'][-1]
+asset_I = False
+assetMargin = latestAssetValue - latestLiabilityValue
+
+if assetMargin > 0:
+    asset_I = True
+
+# Compare Gross and Net Income
+
+latestGrossIncome = stockGrossIncome['Value'][-1]
+latestNetIncome = stockNetIncome['Value'][-1]
+netIncome_I = False
+netIncomeMark = (latestNetIncome/latestGrossIncome)*100
+
+if netIncomeMark > 10:
+    netIncome_I = True
+
+# Retrieve RSI series
+twentyOneRSI = rsi.calculateRSI(eodDataFrame, 21)
+fourteenRSI = rsi.calculateRSI(eodDataFrame, 14)
+sevenRSI = rsi.calculateRSI(eodDataFrame, 7)
+
+# RSI Indicators
+twentyOneRSI_I = "Hold"
+fourteenRSI_I = "Hold"
+sevenRSI_I = "Hold"
+
+# RSI Checks
+if twentyOneRSI > 70:
+    twentyOneRSI_I = "Sell"
+if twentyOneRSI < 30:
+    twentyOneRSI_I = "Buy"
+
+if fourteenRSI > 70:
+    fourteenRSI_I = "Sell"
+if twentyOneRSI < 30:
+    fourteenRSI = "Buy"
+
+if sevenRSI > 70:
+    sevenRSI_I = "Sell"
+if sevenRSI < 30:
+    sevenRSI_I = "Buy"
 
 
 
 
-# Graph RSI
-#twentyoneRSI = rsi.calculateRSI(stockPrice, 21)
-#fourteenRSI = rsi.calculateRSI(stockPrice, 14)
-#sevenRSI = rsi.calculateRSI(stockPrice, 7)
-
-#print(stockData)
-#print(stockAssets)
 
