@@ -11,17 +11,18 @@ quandl.ApiConfig.api_key = 'G47s_Q43P4LPhJa8QdEb'
 startDate = date.today() - timedelta(days=365)
 endDate = date.today()
 
+print("Gathering Stocks...")
 # Stock list
 # Import Stock List from CSV file
 stockCodesCsv = pandas.read_csv('WIKI/WIKI-datasets-codes.csv')
 stockList = stockCodesCsv['Code']
 
-
 # TODO: Gather List of Stock Symbols
-stock = "OSK"
-stockSellList = ""
-stockBuyList = ""
+columns = "Stock, SevenRSI, FourteenRSI, TwentyOneRsi"
+stockSellList = []
+stockBuyList = []
 
+print("Starting stock iteration...")
 for x in stockList:
     stock = x
     # TODO: Iterate through each stock
@@ -37,7 +38,7 @@ for x in stockList:
         # stockGrossIncome = quandl.get("SF1/" + stock + "_GP_ARQ.1", start_date=str(startDate), end_date=str(endDate))
         # stockNetIncome = quandl.get("SF1/" + stock + "_NETINC_ART.1", start_date=str(startDate), end_date=str(endDate))
         stockVolume = eodDataFrame['Volume']
-        stockVolumeVariance = 1234
+        stockVolumeVariance = stockVolume.diff
         stockNetIncomePerEmployee = 1234
 
         # Compare Assets and Liability
@@ -95,16 +96,22 @@ for x in stockList:
         monthlyChange = 1234
         averageMonthlyChange = 1234
 
-        print(stock + ": " + sevenRSI_I)
-
         # Sell List
         if twentyOneRSI_I == "Sell" or fourteenRSI_I == "Sell" or sevenRSI_I == "Sell":
-            stockSellList += stock + ", "
+            stockSellSeries = pandas.Series([stock, sevenRSI, fourteenRSI, twentyOneRSI])
+            stockSellList.append(stockSellSeries)
 
         # Buy List
         if twentyOneRSI_I == "Buy" or fourteenRSI_I == "Buy" or sevenRSI_I == "Buy":
-            stockBuyList += stock + ", "
+            stockBuySeries = pandas.Series([stock, sevenRSI, fourteenRSI, twentyOneRSI])
+            stockBuyList.append(stockBuySeries)
 
 
-print("Sell: " + stockSellList + " " + str(len(stockSellList)))
-print("Buy: " + stockBuyList + " " + str(len(stockBuyList)))
+# TODO: write out buy and sell list
+print("Building Dataframes...")
+stockSellDataframe = pandas.DataFrame(stockSellList, index=date.today(), columns=columns)
+stockBuyDataframe = pandas.DataFrame(stockBuyList, index=date.today(), columns=columns)
+print("Saving Stock lists...")
+stockSellDataframe.to_csv("StockSellList.csv", sep='\t', encoding='utf-8')
+stockBuyDataframe.to_csv("StockBuyList.csv", sep='\t', encoding='utf-8')
+print("Complete!")
