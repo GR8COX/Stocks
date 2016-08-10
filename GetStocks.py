@@ -1,8 +1,9 @@
 import quandl
 import CalculateRSI as rsi
 import pandas
-import csv
+import progressbar
 from datetime import date, timedelta
+import time
 
 # API Key
 quandl.ApiConfig.api_key = 'G47s_Q43P4LPhJa8QdEb'
@@ -21,9 +22,11 @@ stockList = stockCodesCsv['Code']
 columns = "Stock, SevenRSI, FourteenRSI, TwentyOneRsi"
 stockSellList = []
 stockBuyList = []
-
+bar = progressbar.ProgressBar(max_value=len(stockList))
+barCount = 0
 print("Starting stock iteration...")
 for x in stockList:
+
     stock = x
     # TODO: Iterate through each stock
     # Stock Metrics
@@ -98,20 +101,36 @@ for x in stockList:
 
         # Sell List
         if twentyOneRSI_I == "Sell" or fourteenRSI_I == "Sell" or sevenRSI_I == "Sell":
-            stockSellSeries = pandas.Series([stock, sevenRSI, fourteenRSI, twentyOneRSI])
+            stockSellSeries = pandas.Series([stock, sevenRSI_I, fourteenRSI_I, twentyOneRSI_I])
             stockSellList.append(stockSellSeries)
 
         # Buy List
         if twentyOneRSI_I == "Buy" or fourteenRSI_I == "Buy" or sevenRSI_I == "Buy":
-            stockBuySeries = pandas.Series([stock, sevenRSI, fourteenRSI, twentyOneRSI])
+            stockBuySeries = pandas.Series([stock, sevenRSI_I, fourteenRSI_I, twentyOneRSI_I])
             stockBuyList.append(stockBuySeries)
+
+        # Progress bar
+        time.sleep(0.1)
+
+        barCount += 1
+        bar.update(barCount)
 
 
 # TODO: write out buy and sell list
 print("Building Dataframes...")
-stockSellDataframe = pandas.DataFrame(stockSellList, index=date.today(), columns=columns)
-stockBuyDataframe = pandas.DataFrame(stockBuyList, index=date.today(), columns=columns)
-print("Saving Stock lists...")
-stockSellDataframe.to_csv("StockSellList.csv", sep='\t', encoding='utf-8')
-stockBuyDataframe.to_csv("StockBuyList.csv", sep='\t', encoding='utf-8')
+# TODO: Fix indexing on dataframes
+
+
+print("Exporting Buy list...")
+stockBuyConcat = pandas.concat(stockBuyList, axis=1)
+stockBuyDataframe = pandas.DataFrame(stockBuyConcat)
+stockBuyDataframe.rename(index={0: 'Stock', 1: 'SevenDayRSI', 2: 'FourteenDayRSI', 3: 'TwentyOneDayRSI'}, inplace=True)
+stockBuyDataframe.to_csv("StockBuyList.csv", encoding='utf-8')
+
+print("Export Sell list...")
+stockSellConcat = pandas.concat(stockSellList, axis=1)
+stockSellDataframe = pandas.DataFrame(stockSellConcat)
+stockSellDataframe.rename(index={0: 'Stock', 1: 'SevenDayRSI', 2: 'FourteenDayRSI', 3: 'TwentyOneDayRSI'}, inplace=True)
+stockSellDataframe.to_csv("StockSellList.csv", encoding='utf-8')
+
 print("Complete!")
