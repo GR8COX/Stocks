@@ -3,6 +3,7 @@ import CalculateRSI as rsi
 import pandas
 import progressbar
 from datetime import date, timedelta
+from HtmlExtract import parseHtml
 import time
 
 # API Key
@@ -24,22 +25,28 @@ stockSellList = []
 stockBuyList = []
 bar = progressbar.ProgressBar(max_value=len(stockList))
 barCount = 0
+url = 'http://financials.morningstar.com/balance-sheet/bs.html?t='
 print("Starting stock iteration...")
 for x in stockList:
 
     stock = x
+
     # Iterate through each stock
     # Stock Metrics
     eodDataFrame = quandl.get(stock, start_date=str(startDate), end_date=str(endDate), collapse="daily")
     if not eodDataFrame.empty:
+        stockTrimmed = stock.replace('WIKI/', '')
+        stockUrl = url + stockTrimmed + '&annual'
+        parseHtml(stockUrl)
+
         stockPrice = eodDataFrame['Close']
         stockOpen = eodDataFrame['Open']
         stockHigh = eodDataFrame['High']
         stockLow = eodDataFrame['Low']
-        # stockAssets = quandl.get("SF1/" + stock + "_ASSETS_ARQ.1", start_date=str(startDate), end_date=str(endDate))
-        # stockLiability = quandl.get("SF1/" + stock + "_LIABILITIES_ARQ.1", start_date=str(startDate), end_date=str(endDate))
-        # stockGrossIncome = quandl.get("SF1/" + stock + "_GP_ARQ.1", start_date=str(startDate), end_date=str(endDate))
-        # stockNetIncome = quandl.get("SF1/" + stock + "_NETINC_ART.1", start_date=str(startDate), end_date=str(endDate))
+        #stockAssets = quandl.get("SF1/" + stockTrimmed + "_ASSETS_ARQ.1", start_date=str(startDate), end_date=str(endDate))
+        #stockLiability = quandl.get("SF1/" + stockTrimmed + "_LIABILITIES_ARQ.1", start_date=str(startDate), end_date=str(endDate))
+        #stockGrossIncome = quandl.get("SF1/" + stockTrimmed + "_GP_ARQ.1", start_date=str(startDate), end_date=str(endDate))
+        #stockNetIncome = quandl.get("SF1/" + stockTrimmed + "_NETINC_ART.1", start_date=str(startDate), end_date=str(endDate))
         stockVolume = eodDataFrame['Volume']
         stockVolumeVariance = stockVolume.diff
         stockNetIncomePerEmployee = 1234
