@@ -14,4 +14,4 @@ def parseHtml(url):
     cells = row.find_all('td')[1:]
 
     values = [c.text.strip() for c in cells]
-    print(values)
+    #print(values)
