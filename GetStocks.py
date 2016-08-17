@@ -18,7 +18,7 @@ print("Gathering Stocks...")
 stockCodesCsv = pandas.read_csv('WIKI/WIKI-datasets-codes.csv')
 stockList = stockCodesCsv['Code']
 
-# TODO: Gather List of Stock Symbols
+# Gather List of Stock Symbols
 columns = "Stock, SevenRSI, FourteenRSI, TwentyOneRsi"
 stockSellList = []
 stockBuyList = []
@@ -28,7 +28,7 @@ print("Starting stock iteration...")
 for x in stockList:
 
     stock = x
-    # TODO: Iterate through each stock
+    # Iterate through each stock
     # Stock Metrics
     eodDataFrame = quandl.get(stock, start_date=str(startDate), end_date=str(endDate), collapse="daily")
     if not eodDataFrame.empty:
