@@ -25,7 +25,7 @@ stockSellList = []
 stockBuyList = []
 bar = progressbar.ProgressBar(max_value=len(stockList))
 barCount = 0
-url = 'http://financials.morningstar.com/balance-sheet/bs.html?t='
+url = 'http://www.marketwatch.com/investing/stock/'
 print("Starting stock iteration...")
 for x in stockList:
 
@@ -36,7 +36,7 @@ for x in stockList:
     eodDataFrame = quandl.get(stock, start_date=str(startDate), end_date=str(endDate), collapse="daily")
     if not eodDataFrame.empty:
         stockTrimmed = stock.replace('WIKI/', '')
-        stockUrl = url + stockTrimmed + '&annual'
+        stockUrl = url + stockTrimmed + '/financials'
         parseHtml(stockUrl)
 
         stockPrice = eodDataFrame['Close']
