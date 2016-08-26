@@ -10,10 +10,16 @@ def parseHtml(url):
 
     titles = soup.findAll('td', {'class': 'rowTitle'})
     for title in titles:
+        if 'EPS (Basic) Growth' in title.text:
+            continue
         if 'EPS (Basic)' in title.text:
-            x = (td.text
-            for td in title.findNextSiblings(attrs={'class': 'valueCell'}) if td.text)
-            print(x)
+            y = title.parent
+            yParent = y.parent
+            nextY = y.findAll('td', {'class': 'valueCell'})
+            for z in nextY:
+                text = z.getText()
+                print(text)
+
     #row = titles.parent.parent
     #cells = row.find_all('td')[1:]
 
